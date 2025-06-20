@@ -2,6 +2,7 @@ package com.d288PA.WGU.service;
 
 import com.d288PA.WGU.dao.CartItemRepository;
 import com.d288PA.WGU.dao.CartRepository;
+import com.d288PA.WGU.dao.CustomerRepository;
 import com.d288PA.WGU.entity.Cart;
 import com.d288PA.WGU.entity.CartItem;
 import com.d288PA.WGU.entity.Customer;
@@ -15,33 +16,36 @@ import java.util.UUID;
 
 @Service
 public class CheckoutServiceImpl implements CheckoutService {
-    @Autowired
-    private CartRepository cartRepository;
-    @Autowired
-    private CartItemRepository cartItemRepository;
 
-    public CheckoutServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository) {
+    private CartRepository cartRepository;
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    public CheckoutServiceImpl(CartRepository cartRepository, CustomerRepository customerRepository) {
         this.cartRepository = cartRepository;
-        this.cartItemRepository = cartItemRepository;
+        this.customerRepository = customerRepository;
     }
 
     @Transactional
     @Override
     public PurchaseResponse placeOrder(Purchase purchase) {
         Cart cart = purchase.getCart();
-        Customer customer = purchase.getCustomer();
         Set<CartItem> cartItems = purchase.getCartItems();
 
-        String orderTrackingNumber = UUID.randomUUID().toString();
-        cart.setOrderTrackingNumber(orderTrackingNumber);
+        String trackingNumber = UUID.randomUUID().toString();
+        cart.setOrderTrackingNumber(trackingNumber);
         cart.setStatus(StatusType.ordered);
         cartItems.forEach(cartItem -> {
             cart.add(cartItem);
             cartItem.setCart(cart);
 
         });
+            Customer customer = purchase.getCustomer();
+            customer.add(cart);
             cartRepository.save(cart);
+            customerRepository.save(customer);
 
-            return new PurchaseResponse(orderTrackingNumber);
+
+            return new PurchaseResponse(trackingNumber);
     }
 }

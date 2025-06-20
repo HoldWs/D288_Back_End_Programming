@@ -20,7 +20,7 @@ public class Division {
     @Column(name = "division_id")
     private Long id;
 
-    @Column(name = "division")
+    @Column(name = "division", nullable = false)
     private String division_name;
 
     @Column(name = "create_date")
