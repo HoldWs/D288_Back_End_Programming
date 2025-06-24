@@ -7,12 +7,13 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "divisions")
-@NoArgsConstructor
-@AllArgsConstructor
+// @NoArgsConstructor
+// @AllArgsConstructor
 public class Division {
 
     @Id
@@ -32,7 +33,7 @@ public class Division {
     private Date last_update;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "country_id")
+    @JoinColumn(name = "country_id", nullable = false)
     private Country country;
 
     @Column(name = "country_id", insertable = false, updatable = false)
@@ -40,7 +41,6 @@ public class Division {
 
     @OneToMany(mappedBy = "division", cascade = CascadeType.ALL)
     private Set<Customer> customers;
-
 
     public void setCountry(Country country) {
         this.country = country;

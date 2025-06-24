@@ -4,7 +4,7 @@ package com.d288PA.WGU.service;
 import lombok.NonNull;
 
 public class PurchaseResponse {
-    @NonNull
+
     private  String orderTrackingNumber;
 
     public PurchaseResponse(String orderTrackingNumber) {

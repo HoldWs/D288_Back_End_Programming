@@ -8,12 +8,13 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "vacations")
-@NoArgsConstructor
-@AllArgsConstructor
+// @NoArgsConstructor
+// @AllArgsConstructor
 public class Vacation {
 
     @Id
@@ -44,6 +45,7 @@ public class Vacation {
 
     @OneToMany(mappedBy = "vacation")
     private Set<Excursion> excursions;
+
 
 
 

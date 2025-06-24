@@ -9,14 +9,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "carts")
-@NoArgsConstructor
-@AllArgsConstructor
+// @NoArgsConstructor
+// @AllArgsConstructor
 public class Cart {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cart_id")
@@ -32,30 +32,34 @@ public class Cart {
     private int party_size;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name="status")
     private StatusType status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    private Set<CartItem> cartItem = new HashSet<>();
 
     @Column(name = "create_date")
     @CreationTimestamp
     private Date create_date;
 
-    @Column
+    @Column(name = "last_update")
     @UpdateTimestamp
     private Date last_update;
 
-
-
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
-
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<CartItem> cartItem = new HashSet<>();
-
-
-    public void add(CartItem cartItem) {
-        this.cartItem.add(cartItem);
+    public void add(CartItem item) {
+        if(item != null) {
+            if(cartItem == null) {
+                cartItem = new HashSet<>();
+            }
+            cartItem.add(item);
+            item.setCart(this);
+        }
     }
+
     public Long getId() {
         return id;
     }
@@ -96,22 +100,6 @@ public class Cart {
         this.status = status;
     }
 
-    public Date getCreate_date() {
-        return create_date;
-    }
-
-    public void setCreate_date(Date create_date) {
-        this.create_date = create_date;
-    }
-
-    public Date getLast_update() {
-        return last_update;
-    }
-
-    public void setLast_update(Date last_update) {
-        this.last_update = last_update;
-    }
-
     public Customer getCustomer() {
         return customer;
     }
@@ -126,5 +114,21 @@ public class Cart {
 
     public void setCartItem(Set<CartItem> cartItem) {
         this.cartItem = cartItem;
+    }
+
+    public Date getCreate_date() {
+        return create_date;
+    }
+
+    public void setCreate_date(Date create_date) {
+        this.create_date = create_date;
+    }
+
+    public Date getLast_update() {
+        return last_update;
+    }
+
+    public void setLast_update(Date last_update) {
+        this.last_update = last_update;
     }
 }

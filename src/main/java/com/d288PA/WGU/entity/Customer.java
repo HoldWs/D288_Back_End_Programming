@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -24,24 +25,24 @@ public class Customer {
     @Column(name = "customer_id")
     private Long id;
 
-    @NonNull
+    // @NonNull
     @Column(name = "customer_first_name", nullable = false)
     private String firstName;
 
-    @NonNull
+    // @NonNull
     @Column(name = "customer_last_name", nullable = false)
     private String lastName;
 
-    @NonNull
+    // @NonNull
     @Column(name = "address", nullable = false)
     private String address;
 
-    @NonNull
+    // @NonNull
     @Column(name = "postal_code", nullable = false)
     private String postal_code;
 
 
-    @NonNull
+    // @NonNull
     @Column(name = "phone", nullable = false)
     private String phone;
 
@@ -55,7 +56,7 @@ public class Customer {
 
 
     @ManyToOne
-    @JoinColumn(name = "division_id")
+    @JoinColumn(name = "division_id", nullable = false)
     private Division division;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)

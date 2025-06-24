@@ -8,12 +8,13 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "excursions")
-@NoArgsConstructor
-@AllArgsConstructor
+// @NoArgsConstructor
+// @AllArgsConstructor
 public class Excursion {
 
     @Id
@@ -40,10 +41,10 @@ public class Excursion {
 
 
     @ManyToOne
-    @JoinColumn(name = "vacation_id")
+    @JoinColumn(name = "vacation_id", nullable = false)
     private Vacation vacation;
 
-    @ManyToMany(mappedBy = "excursions")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "excursions")
     private Set<CartItem> cartItems;
 
 

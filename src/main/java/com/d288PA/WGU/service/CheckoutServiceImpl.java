@@ -1,8 +1,10 @@
 package com.d288PA.WGU.service;
 
+
 import com.d288PA.WGU.dao.CartItemRepository;
 import com.d288PA.WGU.dao.CartRepository;
 import com.d288PA.WGU.dao.CustomerRepository;
+import com.d288PA.WGU.dao.ExcursionRepository;
 import com.d288PA.WGU.entity.Cart;
 import com.d288PA.WGU.entity.CartItem;
 import com.d288PA.WGU.entity.Customer;
@@ -19,33 +21,41 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     private CartRepository cartRepository;
     private CustomerRepository customerRepository;
+    private CartItemRepository cartItemRepository;
+
+
 
     @Autowired
-    public CheckoutServiceImpl(CartRepository cartRepository, CustomerRepository customerRepository) {
+    public CheckoutServiceImpl(CustomerRepository customerRepository, CartRepository cartRepository, CartItemRepository cartItemRepository, ExcursionRepository excursionRepository) {
         this.cartRepository = cartRepository;
         this.customerRepository = customerRepository;
+        this.cartItemRepository = cartItemRepository;
     }
 
     @Transactional
     @Override
     public PurchaseResponse placeOrder(Purchase purchase) {
         Cart cart = purchase.getCart();
-        Set<CartItem> cartItems = purchase.getCartItems();
 
         String trackingNumber = UUID.randomUUID().toString();
         cart.setOrderTrackingNumber(trackingNumber);
+
+        Set<CartItem> cartItems = purchase.getCartItems();
+        cartItems.forEach(item -> item.setCart(cart));
+        cart.setCartItem(cartItems);
+
+//        Customer customer = purchase.getCustomer();
+//        cart.setCustomer(customer);
+//        customer.add(cart);
+
+
         cart.setStatus(StatusType.ordered);
-        cartItems.forEach(cartItem -> {
-            cart.add(cartItem);
-            cartItem.setCart(cart);
-
-        });
-            Customer customer = purchase.getCustomer();
-            customer.add(cart);
-            cartRepository.save(cart);
-            customerRepository.save(customer);
+        cartRepository.save(cart);
+        // customerRepository.save(customer);
 
 
-            return new PurchaseResponse(trackingNumber);
+
+
+        return new PurchaseResponse(trackingNumber);
     }
 }
